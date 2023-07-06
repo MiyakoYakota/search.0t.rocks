@@ -1,0 +1,36 @@
+<html>
+<!-- Lists all record's first names, at the bottom of the page there's options to choose a-z -->
+<head>
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Record Report" />
+  <meta property="og:description" content="Database Record Report {{#record}}{{key}}: {{value}} {{/record}}" />
+  <meta property="og:site_name" content="Database Search" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Language" content="en" />
+  <meta name="robots" content="index, follow">
+  <title>Records Result - {{count}} Results</title>
+
+  <script>
+    function exportMore() {
+      const encodedUrl = encodeURIComponent(window.location.href);
+      window.location.href = `/exports?url=${encodedUrl}`;
+    }
+  </script>
+</head>
+<body>
+    <h1>Records Result</h1>
+    <h2>{{resultCount}} Hits - {{count}} Results Shown <button onclick="exportMore()">Click here for more</button></h2>
+    {{#records}}
+    <div class="record">
+        <dl>
+            <dt>
+            <a href="/documents/by_id/{{ id }}">{{id}}</a> - <a href='/visualize?id={{id}}' rel="nofollow">(Visualize)</a> - <a href="/faq" rel="nofollow">(See FAQ about Removal)</a></dt>
+            {{#fields}}
+            
+            <dd> {{ . }}</a></dd>
+            {{/fields}}
+        </dl>
+    </div>
+    {{/records}}
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+    /* Fill full width */
+    html,
+    body,
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Display mapServerSelector over cesiumContainer (fixed to the top left) */
+    #mapServerSelector {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      /* Scrollable */
+      overflow-y: scroll;
+    }
+
+    .collapseable {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+
+<body>
+  <div id="cesiumContainer"></div>
+  <!-- Div that will allow users what mapservers to select -->
+  <div id="mapServerSelector">
+
+    <span>Usage: Click on any area within the USA to see who lives there. Select items below for additional data.</span>
+    <br /><br />
+
+  </div>
+
+
+  <script>
+    let enabledMapServers = [];
+    let selectedBaseLayer = 'earth';
+    const baseLayers = ['osm', 'earth', 'bing']
+
+    let p3tTileset = null
+
+    const USStates = [
+      'Alabama',
+      'Alaska',
+      'Arizona',
+      'Arkansas',
+      'California',
+      'Colorado',
+      'Connecticut',
+      'Delaware',
+      'District of Columbia',
+      'Florida',
+      'Georgia',
+      'Hawaii',
+      'Idaho',
+      'Illinois',
+      'Indiana',
+      'Iowa',
+      'Kansas',
+      'Kentucky',
+      'Louisiana',
+      'Maine',
+      'Maryland',
+      'Massachusetts',
+      'Michigan',
+      'Minnesota',
+      'Mississippi',
+      'Missouri',
+      'Montana',
+      'Nebraska',
+      'Nevada',
+      'New Hampshire',
+      'New Jersey',
+      'New Mexico',
+      'New York',
+      'North Carolina',
+      'North Dakota',
+      'Ohio',
+      'Oklahoma',
+      'Oregon',
+      'Pennsylvania',
+      'Rhode Island',
+      'South Carolina',
+      'South Dakota',
+      'Tennessee',
+      'Texas',
+      'Utah',
+      'Vermont',
+      'Virginia',
+      'Washington',
+      'West Virginia',
+      'Wisconsin',
+      'Wyoming'
+    ]
+
+
+    const dataLayers = {
+      'USA': {
+        'Arizona': [
+        {
+        url: 'https://gis.mcassessor.maricopa.gov/arcgis/rest/services/Parcels/MapServer',
+        layers: ['Maricopa - Parcels'],
+      }
+        ],
+        'Utah': [
+        {
+        url: 'https://maps.slcgov.com/gis/rest/services/publish/parcels/MapServer',
+        layers: ['Salt Lake City - Parcels'],
+      }
+        ],
+        'Washington': [
+      {
+        url: 'https://maps.kirklandwa.gov/host/rest/services/Parcels/MapServer',
+        layers: ['Kirkland - Parcels'],
+      }
+    ],
+    'Maryland': [
+      {
+        url: 'https://gis.calvertcountymd.gov/server/rest/services/Countywide/Parcels/MapServer',
+        layers: ['Calvert County - Parcels'],
+      }
+    ],
+    'New Mexico': [
+      {
+        url: 'https://gis.donaanacounty.org/server/rest/services/Parcel/MapServer',
+        layers: ['Dona Ana County - Parcels'],
+      }
+    ],
+        'California': [
+          {
+            url: 'https://maps.co.monterey.ca.us/server/rest/services/Land_Records/Parcels/MapServer',
+            layers: ['Monterey - Parcels'],
+          },
+          {
+            url: 'https://gis.slocounty.ca.gov/arcgis/rest/services/Public/parcels/MapServer',
+            layers: ['San Louis Obispo - Data Parcels'],
+          },
+          {
+            url: 'https://gissd.sandag.org/rdw/rest/services/Parcel/Parcels/MapServer',
+            layers: ['San Diego Parcels (Labels)', 'San Diego Parcels'],
+          },
+          {
+        url: 'https://maps.santabarbaraca.gov/arcgis/rest/services/Parcels/MapServer',
+        layers: ['Santa Barbara - Parcels'],
+      }
+        ],
+        'Oregon': [
+          {
+            url: 'https://gis.co.douglas.or.us/server/rest/services/Parcel/Parcels/MapServer',
+            layers: ['Douglas County - Parcels'],
+          }
+        ],
+        'Tennessee': [
+          {
+            url: 'https://gis.shelbycountytn.gov/public/rest/services/BaseMap/Parcel/MapServer',
+            layers: ['Shelby County - Parcels'],
+          }
+        ],
+        'Florida': [
+          {
+            url: "https://gis.fdot.gov/arcgis/rest/services/Parcels/MapServer",
+            layers: ["Parcel Search"],
+          },
+          {
+            url: "https://maps.fiu.edu/arcgis/rest/services/Florida/FDOT/MapServer",
+            // 1 - 31
+            layers: ["Interchanges", "Intersections", "Railroad Crossings", "Rest & Welcome Centers", "Traffic Signal Locations", "Bridges", "Divided (?)", "Faccross (?)", "Functional Classification", "Median Width", "Median Type", "Number of Lanes", "Active on the State Highway System", "Pavement Conditions", "Access Control Type", "Road Status", "Surface Width", "", "", "", "Toll Roads", "Interstates", "US Highways", "National Highway System", "Federal Aid Highway System", "Strategic Intermodal System Roads", "State Roads", "County Roads", "Active Off the State Highway System", "Roads with Local Names", "Maximum Speed Limits", "Truck Volume"],
+          },
+          {
+            url: "https://ca.dep.state.fl.us/arcgis/rest/services/Map_Direct/Program_Support/MapServer",
+            // 0-50
+            layers: ["", "", "", "Soil Survey", "", "Areas of Critical State Concern", "National Wetlands", "Military Bases", "Port Facilities", "CERP Project", "Ecoregions/Subregions", "Potential Natural Areas", "Woodstork Nesting Colonies", "Eagle Nests", "", "", "ERP Conservation Easements (Areas)", "ERP Conservation Easements (Points)", "Managed Entities", "Permit Applications", "Non DEP Wastewater Facilities Potentially Accepting Septage", "Non DEP Wastewater Facilities Potentially Accepting Septage", "DOH Dental Facilities", "DOH Septage Application Sites", "DOH Beach Sampling Locations", "DOH Beach Sampling Locations - 1 Mile Buffer", "", "", "", "", "National Estuarine Research Reserve", "Florida State Park Burn Goals (Current Year)", "Florida State Park Burn Goals (Previous Year)", "Florida State Parks - Last Burn Date", "Florida State Park Boundaries", "", "", "", "Florida Keys National Marine Sanctuary", "FWC Shoreline", "NOAA Mean Higher High Water", "NOAA Composite Shoreline", "Retained Waters List - Flowlines", "Retained Waters List - Waterbodies", "Retained Waters List - Areas", "Tribe 404 Public Notice", "Consolidated Retained Waters Guideline", "Historic Commerce Waters - Flowline", "Historic Commerce Waters - Waterbodies", "Federal Projects - Points", "Federal Projects - Areas"],
+          }
+        ],
+        'Georgia': [
+          {
+            url: 'https://dcgis.dekalbcountyga.gov/hosted/rest/services/Parcels/MapServer',
+            layers: ['DeKalb County Parcels'],
+          },
+          {
+            url: 'https://www.mgrcmaps.org/arcgis/rest/services/MonroeCounty/MonroeCountyParcels/MapServer',
+            layers: ['', 'Monroe County Parcels']
+          },
+          {
+            url: 'https://weba.claytoncountyga.gov:5443/server/rest/services/TaxAssessor/ParcelSales/MapServer',
+            layers: ['Clayton County Parcels'],
+          },
+          {
+            url: 'https://rnhp.dot.ga.gov/hosting/rest/services/ExcessParcelsExternal/MapServer',
+            layers: ['Excess Parcels'],
+          },
+          {
+            url: 'https://rnhp.dot.ga.gov/hosting/rest/services/web_trafficcameras/MapServer',
+            layers: ['Traffic Cameras'],
+          },
+          {
+            url: 'https://rnhp.dot.ga.gov/hosting/rest/services/ARCWEBSVCMAP/MapServer',
+            layers: ['AADT', 'Interstates', 'US-Highways', 'State Routes', 'Statewide Roads', 'Milepost Route', 'Milepoint Route', 'Transportation Management Area', 'County Boundaries', 'Cities', 'Congressional District', 'House Districts', 'Senate Districts', 'GDOT Maintenance Areas', 'GDOT Districts', 'Metro Planning Organizations'],
+          }
+        ],
+        'Michigan': [
+          {
+            'url': 'https://maps.lansingmi.gov/arcgis/rest/services/Police/Camera/MapServer',
+            'layers': ['Police Cameras']
+          }
+        ],
+        'Kansas': [
+          {
+            url: 'https://gis2.lawrenceks.org/ArcGIS/rest/services/PublicWorks/TrafficCameras/MapServer',
+            layers: ['Traffic Cameras']
+          }
+        ],
+        'Rhode Island': [
+          {
+            url: 'https://vueworks.dot.ri.gov/arcgis/rest/services/VW_ITSAssets105/MapServer',
+            layers: ['Wrong Way Driver', 'Electronic Message Sign', 'Cameras']
+          }
+        ],
+        'Alaska': [
+          {
+            url: 'https://maps.commerce.alaska.gov/server/rest/services/Services/CDO_PublicSafety/MapServer',
+            layers: ['Crime']
+          }
+        ],
+        'North Carolina': [
+          {
+            url: 'https://services.nconemap.gov/secure/rest/services/NC1Map_Environment/FeatureServer',
+            layers: ['NC1Map Environment']
+          },
+          {
+            url: 'https://gis.charlottenc.gov/arcgis/rest/services/ODP/CMPD_Homicide/MapServer',
+            layers: ['Charlotte - Homicide']
+          },
+          {
+            url: 'https://gis.charlottenc.gov/arcgis/rest/services/ODP/CMPD_Calls_for_Service/MapServer',
+            layers: ['Charlotte - Calls for Service']
+          },
+          {
+            url: 'https://gis.charlottenc.gov/arcgis/rest/services/ODP/City_Space_ODP_Data/MapServer',
+            layers: ['Charlotte - AptIndex Apartments', 'Charlotte - Vulnerbility to Displacement by NPA']
+          },
+          {
+            url: 'https://gis.charlottenc.gov/arcgis/rest/services/ODP/Parcel_Zoning_Lookup/MapServer',
+            layers: ['Charlotte - Parcel Zoning Lookup']
+          }
+        ],
+        'Indiana': [
+          {
+            url: 'http://maps.evansvillegis.com/arcgis_server/rest/services/PROPERTY/PARCELS/MapServer',
+            layers: ['Vanderburgh County Parcels']
+          }
+        ],
+        'Virginia': [
+          {
+            url: 'https://maps.nnva.gov/gis/rest/services/Operational/Parcel/MapServer',
+            layers: ['Newport News - Parcels']
+          }
+        ],
+        'Wisconsin': [
+      {
+        url: 'https://gisweb.fdlco.wi.gov/server/rest/services/Parcels_AllSiteAddr_ViewExport/MapServer',
+        layers: ['Address Numbers', 'Labels', 'Block_Numbers_Labels', 'CSM_Numbers_Labels', 'Dimensions_Labels', 'Lot_Numbers_Labels', 'Parcel_Numbers_Labels', 'Fond du Lac County - Parcels'],
+      }
+    ],
+      }
+    }
+
+    function addImageryProviders(viewer) {
+      // Add to the mapServerSelector div
+      const mapServerSelector = document.getElementById('mapServerSelector');
+
+      // Create a collapseable for each country
+      Object.keys(dataLayers).forEach((key) => {
+        // Create a collapseable for the country
+        const countryCollapseable = document.createElement('div');
+        countryCollapseable.className = 'collapseable';
+        countryCollapseable.innerHTML = key;
+        countryCollapseable.id = key;
+        mapServerSelector.appendChild(countryCollapseable);
+
+        // Create a collapseable for each state within the country
+        Object.keys(dataLayers[key]).forEach((state) => {
+          const stateCollapseable = document.createElement('div');
+          stateCollapseable.className = 'collapseable';
+          stateCollapseable.innerHTML = '&emsp;' + state;
+          stateCollapseable.id = state;
+          countryCollapseable.appendChild(stateCollapseable);
+
+          // Create a checkbox for each layer within the state
+          dataLayers[key][state].forEach((stateMapServer) => {
+            // For each layer 
+            stateMapServer.layers.forEach((layer, layerIdx) => {
+              // If the name is empty skip it
+              if (layer === '') {
+                return;
+              }
+
+              // Add break
+              stateCollapseable.appendChild(document.createElement('br'));
+              const checkbox = document.createElement('input');
+              checkbox.type = 'checkbox';
+              checkbox.id = layer;
+              checkbox.name = layer;
+              checkbox.value = layer;
+              checkbox.checked = false;
+
+              // Add event handler for when changed
+              checkbox.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                  console.log(`Adding imagery provider: ${stateMapServer.url} - ${layer}`);
+                  // Add the imagery provider to the list of enabled map servers
+                  enabledMapServers.push({
+                    url: stateMapServer.url,
+                    layer: layerIdx,
+                    layerDesc: layer,
+                  });
+                } else {
+                  console.log(`Removing imagery provider: ${stateMapServer.url} - ${layer}`);
+                  // Find the imagery provider and remove it
+                  enabledMapServers.splice(enabledMapServers.findIndex((mapServer) => {
+                    return mapServer.url === stateMapServer.url && mapServer.layer === layer;
+                  }), 1);
+                }
+
+                // Remove all primitives
+                viewer.scene.primitives.removeAll();
+
+                // Remove all imagery providers except for Google Earth
+                viewer.imageryLayers.removeAll(true);
+
+                // Re-add google earth
+                const googleEarthImageryProvider = new Cesium.UrlTemplateImageryProvider({
+                  url: 'https://khms0.google.com/kh/v=946?x={x}&y={y}&z={z}',
+                  tilingScheme: new Cesium.WebMercatorTilingScheme(),
+                  maximumLevel: 23,
+                });
+
+                viewer.imageryLayers.addImageryProvider(googleEarthImageryProvider);
+
+                // Add all enabled imagery providers
+                enabledMapServers.forEach((mapServer) => {
+                  const imageryProvider = new Cesium.ArcGisMapServerImageryProvider({
+                    url: mapServer.url,
+                    layers: mapServer.layer,
+                  });
+
+
+                  viewer.imageryLayers.addImageryProvider(imageryProvider);
+                });
+              });
+
+
+              // Add 2x emsp before the checkbox
+              stateCollapseable.appendChild(document.createTextNode('\u2003\u2003'));
+
+              stateCollapseable.appendChild(checkbox);
+
+              // Add 2x emsp before the checkbox
+
+              const label = document.createElement('label');
+              label.htmlFor = layer;
+              label.appendChild(document.createTextNode(layer));
+              stateCollapseable.appendChild(label);
+
+              // Add the imagery provider to the viewer
+              // const imageryProvider = new Cesium.ArcGisMapServerImageryProvider({
+              //   url: stateMapServer.url,
+              //   layers: layer,
+              // });
+              // viewer.imageryLayers.addImageryProvider(imageryProvider);
+            });
+          });
+        });
+      });
+    }
+    // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      timeline: false,
+      animation: false,
+    });
+
+    var Cesium3DTileFeature = Cesium.Cesium3DTileFeature;
+
+    const addP3T = async function () {
+      try {
+        p3tTileset = await Cesium.createGooglePhotorealistic3DTileset();
+        viewer.scene.primitives.add(p3tTileset);
+
+        // Remove the tileset
+        // viewer.scene.primitives.remove(p3tTileset);
+      } catch (error) {
+        console.log(`Failed to load tileset: ${error}`);
+      }
+    }
+
+    addP3T()
+
+    // Remove all imagery providers except for Google Earth
+    viewer.imageryLayers.removeAll(true);
+
+    // Add google earth's tile layer
+    // const googleEarthImageryProvider = new Cesium.UrlTemplateImageryProvider({
+    //   url: 'https://khms0.google.com/kh/v=946?x={x}&y={y}&z={z}',
+    //   tilingScheme: new Cesium.WebMercatorTilingScheme(),
+    //   maximumLevel: 23,
+    // });
+
+    // viewer.imageryLayers.addImageryProvider(googleEarthImageryProvider);
+
+    addImageryProviders(viewer);
+
+
+    // Listen for when a user clicks on an area
+    var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+    handler.setInputAction(function (click) {
+      // Get the lat/long of click area
+      var cartesian = viewer.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid);
+      var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+
+      let lat = Cesium.Math.toDegrees(cartographic.latitude);
+      let long = Cesium.Math.toDegrees(cartographic.longitude);
+
+      // Query the API for the clicked area
+      fetch(`/spatial?latLong=${lat},${long}&d=0.1`)
+        .then(response => response.json())
+        .then(data => {
+          // For each result, create a dot at their lat/long
+          data.records.forEach(record => {
+            let lat = record.latLong.split(',')[0];
+            let long = record.latLong.split(',')[1];
+
+            // Plot the dot above the ground by 20m
+            let dot = viewer.entities.add({
+              position: Cesium.Cartesian3.fromDegrees(long, lat, 20),
+              point: {
+                pixelSize: 10,
+                color: Cesium.Color.RED,
+                outlineColor: Cesium.Color.WHITE,
+                outlineWidth: 2,
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+              },
+              // Attach the record to the dot
+              description: Object.entries(record).map(([key, value]) => `<p><b>${key}</b>: ${value}</p>`).join('')
+            });
+          });
+        });
+
+      
+
+
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+  </script>
+  </div>
+</body>
+
+</html>

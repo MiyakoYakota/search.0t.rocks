@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cytoscape JS App</title>
+  <script src="https://unpkg.com/cytoscape@3.19.0/dist/cytoscape.min.js"></script>
+  <style>
+    #cy {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* Add this to your CSS file or inside a <style> tag */
+    #floating-menu {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      z-index: 999;
+    }
+
+    #floating-menu label,
+    #floating-menu select,
+    #floating-menu input {
+      margin-right: 5px;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.css" />
+  <!-- Add these lines inside the <head> tag -->
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.1/dist/tippy.css" />
+  <!-- Add these lines before the app.js script -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://cytoscape.org/cytoscape.js-popper/cytoscape-popper.js"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+
+</head>
+
+<body>
+  <!-- Add this inside the <body> tag -->
+  <div id="floating-menu">
+    <label for="layout-select">Graph Type:</label>
+    <select id="layout-select">
+      <option value="cose">Cose</option>
+      <option value="grid">Grid</option>
+      <option value="circle">Circle</option>
+      <option value="concentric">Concentric</option>
+      <option value="breadthfirst">Breadthfirst</option>
+    </select>
+    <label for="min-similarity">Minimum Similarity Score:</label>
+    <input type="number" id="min-similarity" min="0" value="10" />
+    <br />
+    <p>Statistics: The last query returned <span id="lastQueryCount">0</span> similar results, of which <span id="lastQueryShown">0</span> were shown. The lowest similarity score was <span id="lastQueryLowestScore">0</span>.</p>
+  </div>
+
+  <div id="cy"></div>
+  <script>
+    const tips = {}
+
+    const layoutSelect = document.getElementById('layout-select');
+    const minSimilarityInput = document.getElementById('min-similarity');
+
+    const lastQueryCount = document.getElementById("lastQueryCount")
+    const lastQueryShownCount = document.getElementById("lastQueryShown")
+    const lastQueryShownLowestScore = document.getElementById("lastQueryLowestScore")
+
+
+    // Set default values
+    let selectedLayout = 'circle';
+    let minSimilarity = 10;
+
+
+    // Initialize Cytoscape instance
+    const cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: [],
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'background-color': '#0074D9',
+            'label': 'data(id)'
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            'width': 3,
+            'line-color': '#7FDBFF',
+            'curve-style': 'bezier'
+          }
+        }
+      ],
+      layout: {
+        name: selectedLayout
+      }
+    });
+
+    
+
+    
+
+    // Function to apply the selected layout
+    function applyLayout() {
+      cy.layout({ name: selectedLayout }).run();
+    }
+
+    // Event listener for layout selection
+    layoutSelect.addEventListener('change', (event) => {
+      selectedLayout = event.target.value;
+      applyLayout();
+    });
+
+    // Event listener for minimum similarity input
+    minSimilarityInput.addEventListener('input', (event) => {
+      
+      minSimilarity = parseInt(event.target.value);
+      console.log("New minimum similarity: " + minSimilarity)
+    });
+
+    // Apply the default layout when the graph is loaded
+    applyLayout();
+    
+
+    var makeTippy = function (ele, text) {
+      var ref = ele.popperRef();
+
+      // Since tippy constructor requires DOM element/elements, create a placeholder
+      var dummyDomEle = document.createElement('div');
+
+      var tip = tippy(dummyDomEle, {
+        getReferenceClientRect: ref.getBoundingClientRect,
+        trigger: 'manual', // mandatory
+        // dom element inside the tippy:
+        content: function () { // function can be better for performance
+          var div = document.createElement('div');
+
+          div.innerHTML = text;
+
+          return div;
+        },
+        // your own preferences:
+        arrow: true,
+        placement: 'bottom',
+        hideOnClick: false,
+        sticky: "reference",
+
+        // if interactive:
+        interactive: true,
+        appendTo: document.body // or append dummyDomEle to document.body
+      });
+
+      return tip;
+    };
+
+    function createDocSummary(doc) {
+      const blacklist = ['id', '_version_', 'line', 'notes']
+      const summary = []
+
+      for (const key in doc) {
+        if (!blacklist.includes(key)) {
+          summary.push(`${key}: ${doc[key]}<br />`)
+        }
+      }
+
+      return summary.join('\n')
+    }
+
+
+
+    // Function to add new nodes (modified to include tooltip creation)
+    function addDocument(record) {
+      const id = record.id
+
+      let newNode = null;
+
+      try {
+        newNode = cy.add({
+          group: 'nodes',
+          data: { id },
+        });
+
+        const tippy = makeTippy(newNode, createDocSummary(record));
+
+        tips[id] = tippy
+
+      } catch (e) {
+        console.log(e)
+      }
+
+
+      cy.layout({
+        name: selectedLayout,
+        minNodeSpacing: 200
+      }).run();
+
+      return newNode
+
+      // cy.layout({ name: 'grid', rows: 1 }).run();
+    }
+
+
+    // Function to create links between nodes
+    function createLink(source, target) {
+      cy.add({
+        group: 'edges',
+        data: {
+          id: `${source}-${target}`,
+          source,
+          target
+        }
+      });
+    }
+
+    // Event handler for node click
+    cy.on('tap', 'node', async function (event) {
+      const nodeId = event.target.data('id');
+      try {
+        const response = await fetch(`/documents/by_id/${nodeId}?wt=json&moreLikeThis=true`);
+        if (response.ok) {
+          const data = await response.json();
+          lastQueryCount.innerText = data.related.length
+
+          let countShown = 0
+
+          let lowestScore = 1000000;
+          
+          data.related.forEach((record) => {
+            if (record['similarity score'] < lowestScore) {
+                lowestScore = record['similarity score']
+            }
+            if (record['similarity score'] >= minSimilarity) {
+              addDocument(record)
+              createLink(nodeId, record.id)
+              countShown += 1
+              console.log(record['similarity score'])
+            }
+          })
+          if (lowestScore === 1000000) {
+            lastQueryShownLowestScore.innerText = 0
+          } else {
+            lastQueryShownLowestScore.innerText = lowestScore
+          }
+        } else {
+          console.error('Error fetching data from API:', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching data from API:', error);
+      }
+    });
+
+    cy.on('mouseover', 'node', function (event) {
+      tips[event.target.id()].show()
+    });
+
+    cy.on('mouseout', 'node', function (event) {
+      tips[event.target.id()].hide()
+    });
+
+
+    (async () => {
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const nodeId = urlParams.get('id');
+
+      if (nodeId) {
+        const response = await fetch(`/documents/by_id/${nodeId}?wt=json`);
+
+        if (response.ok) {
+          const data = await response.json();
+          if (nodeId) {
+            const initialNode = addDocument(data.record);
+            const initialNodeTip = makeTippy(initialNode, "Click Me!");
+            initialNodeTip.show()
+
+            setTimeout(() => {
+              initialNodeTip.hide()
+            }, 7000)
+          }
+        }
+        else {
+          alert("Error fetching from API")
+        }
+      }
+    })()
+
+
+  </script>
+</body>
+
+</html>

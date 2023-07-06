@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Search - Illicit Services</title>
+    
+    <meta name="description" content="Search our database of leaked information. All information is in the public domain and has been compiled into one search engine.">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Illict Services LTD" />
+    <meta property="og:description" content="Search our database of leaked information. All information is in the public domain and has been compiled into one search engine." />
+    <meta property="og:url" content="https://search.illicit.services" />
+    <meta property="og:site_name" content="Database Search" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="en" />
+
+    
+    <meta name="apple-mobile-web-app-status-bar" content="#000000" />
+    <meta name="theme-color" content="#000000" />
+
+    <style>
+        html,
+        body, {
+            height: 100%;
+        }
+
+        #app {
+            height: 100%;
+        }
+
+        html,
+        body, #app, v-main__wrap {
+            background-color: black;
+        }
+
+        /* */
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-main>
+                <span>
+                    <!-- Wallet goes in the top-right -->
+                    <v-toolbar flat color="transparent" dark app style="position: absolute; top: 0; right: 0; z-index: 1000">
+                        <v-toolbar-title class="white--text">
+                            <v-btn @click="showWallet = !showWallet" elevation="0" class="white--text" text><span id="creditCount" v-text="creditStr+' Credits'"></span><v-icon>
+                                    mdi-wallet
+                                </v-icon></v-btn>
+                        </v-toolbar-title>
+                    </v-toolbar>
+                    <!-- Wallet Modal -->
+                    <v-dialog v-model="showWallet" max-width="500px">
+                        <v-card>
+                            <v-card-title>
+                                <span class="headline">Wallet Management</span>
+                                <v-spacer></v-spacer>
+                                <!-- About tooltip -->
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn icon v-on="on" @click="showAbout = !showAbout">
+                                            <v-icon>mdi-information</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Credits currently can be used for: <ul><li>Bulk data exports (thousands to hundres of thousands of records)</li></ul>Credits will soon be used to allow for: <ul><li>Mass-deletion of records (avoid crypto fees)</li><li>Enrichment of your own data-sets (via CSV upload)</li><li>Exporting data from the visualization tool as CSV or Relational JSON</li><li>Any other resource intensive task</li></ul><br/>Of course, regular search will remain free, forever.</span>
+                                </v-tooltip>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-row>
+                                    <v-col cols="12">
+                                        <!-- Allow user to copy their wallet ID -->
+                                        <v-text-field id="walletId" v-model="walletId" label="Wallet ID" append append-icon="mdi-content-copy" @click:append="copyWalletId" @change="updateWalletID"></v-text-field>
+                                        <!-- Subtle warning to user that anyone can use their credits if they have their wallet ID -->
+                                        <v-alert dense type="warning" outlined>
+                                            Your wallet ID is the key to your credits. If you share it with someone, that person can use your credits. If you lose it, you lose your credits.
+                                        </v-alert>
+                                    </v-col>
+
+                                    <v-col cols="12">
+                                        <!-- Allow user to re-fill their wallet -->
+                                        <v-row>
+                                            <v-col cols="10">
+                                                <v-text-field v-model="walletFill" label="Fill Wallet (1 USD = 100)" append prepend-icon="mdi-currency-usd"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="2">
+                                                <v-btn class="my-0 mt-3" color="blue darken-1" block text @click="doFillWallet">
+                                                    Fill
+                                                </v-btn>
+                                            </v-col>
+                                        </v-row>
+                                    </v-col>
+                                </v-row>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="showWallet = false">
+                                    Close
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </span>
+                <v-container flex pa-0>
+                    <h1 style="margin-top: 5%">Records Search</h1>                    
+                    <h2 style="margin-top: 2%">{{count}} Records in DB</h2>
+                    <h3 style="margin-top: 2%"><a href="/map" target="_blank">Try the Map</a>! | <a href="/dear_peter">A Letter to Peter Kleissner</a> | <a href="https://t.me/illsvc">Join the Telegram</a> | <a href="/faq">FAQ</a> | <a href="/donations">Donations</a> | <a href="/exports">Exports</a></h3>
+
+                    <!-- Align card to center of page-->
+                    <v-card elevation="0" style="background-color: transparent">
+                        <v-row>
+                            <v-col md="3">
+                            <h4 style="margin-top: 12%">Search Something...</h4>
+                            </v-col>
+                            <v-col md="2">
+                            <v-checkbox v-model="exact" label="exact?"></v-checkbox>
+                            </v-col>
+                            <v-col md="7">
+                                <v-spacer />
+                            </v-col>
+                        </v-row>
+                        
+                        <v-row v-for="query, idx in queries" style="width: 100%; margin-top: 2%">
+                                <v-col class="my-0 py-1 mx-0 px-0" md="1">
+                                    <v-btn v-if="idx === 0" @click="addQuery" elevation="0" class="white--text" text
+                                        fab><v-icon>
+                                            mdi-plus
+                                        </v-icon>
+                                    </v-btn>
+                                    <v-btn v-else @click="queries.splice(idx, 1)" elevation="0" class="white--text" text
+                                        fab><v-icon>
+                                            mdi-minus
+                                        </v-icon>
+                                </v-col>
+                                <v-col md="2">
+                                    <v-select class="my-0 py-0 mx-0 px-0" v-model="query.field" :items="queryOptions" autocomplete="off"></v-select>
+                                </v-col>
+                                <v-col v-if="!isMobile()" md="1">
+                                    <v-checkbox class="my-0 mx-0 px-0" v-model="query.not" label="Is Not"></v-checkbox>
+                                </v-col>
+                                <v-col v-if="query.field !== 'Password'" md="6">
+                                    <v-text-field class="my-0 py-0 mx-0 px-0" v-model="query.value"></v-text-field>
+                                </v-col>
+                                <v-col v-if="query.field === 'Password'" md="4">
+                                    <v-text-field class="my-0 py-0 mx-0 px-0" v-model="query.value"></v-text-field>
+                                </v-col>
+                                <v-col v-if="query.field === 'Password'" md="2">
+                                    <v-checkbox class="my-0 mx-0 px-0" v-model="query.extendedSearch" label="Extended Search"></v-text-field>
+                                </v-col>
+                                <v-col md="2">
+                                    <v-btn @click="buildAndSendQuery" v-if="idx === 0" class="my-0 py-0" elevation="0" class="white--text"
+                                        text><v-icon>
+                                            mdi-account-search
+                                        </v-icon></v-btn>
+                                </v-col>
+                            </v-row>
+                    </v-card>
+
+                    <div style="margin-left: 10px">
+                        <p style="margin-top: 5%">Example Queries:</p>
+                        <p><a href="/records?firstName=Troy&lastName=Hunt">Name: Troy Hunt</a></p>
+                        <p><a href="/records?emails=larrytsantos@yahoo.com">Email: larrytsantos@yahoo.com</a></p>
+                        <p><a href="/records?usernames=Oni">Username: Oni</a></p>
+                        <p><a href="/records?VRN=kjg7920">License Plate: KJG7920</a></p>
+                    </div>
+                    <div style="margin-left: 10px">
+                        <p>If you find these services useful, BTC and Monero donations are appreciated. <br /> BTC: bc1qel7fg6yd96fp3yjh94av8pssz8er2yeluylzcw <br />XMR: 44y4PfBf2TmfgGEX7vAZ7MdCBohAuwDGee8BjwbVfUP75nmEQqbB3rDLRTfEcbkHq33ZVoofMrEX63fVPxHcsVv8AnD9KRo</p>
+                    </div>
+
+
+                    <small>Copyright <a href="https://illicit.services">Illicit Services LTD</a>. By using this service you agree with the <a href="/terms">terms of use</a>. <a href="/canary">Canary</a></small>
+                </v-container>
+            </v-main>
+        </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script>
+        const creditCountElement = document.getElementById("creditCount")
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify({
+                theme: { dark: true },
+                // Mdi icons
+                icons: {
+                    iconfont: 'mdi',
+                },
+            }),
+            data: () => ({
+                queries: [
+                    { field: 'First Name', value: '' },
+                ],
+                showWallet: false,
+                balance: 0,
+                exact: false,
+                creditStr: '<loading>',
+                walletFill: 0.0,
+                walletId: '',
+                hashTypes: ['BCrypt', 'MD5', 'SHA1', 'SHA256', 'SHA512', 'RIPEMD160', 'SHA3', 'SHA224', 'SHA384'],
+                queryOptions: [
+                    'First Name',
+                    'Last Name',
+                    'Email',
+                    'Username',
+                    'Password',
+                    'Domain',
+                    'IP Address',
+                    'ASN Number',
+                    'ASN Name',
+                    'Continent',
+                    'Country',
+                    'Phone',
+                    'Address',
+                    'License Plate Number',
+                    'Birth Year',
+                    'VIN',
+                    'City',
+                    'State',
+                    'Zip',
+                    'Source'
+                ],
+                queryFieldMap: {
+                    'First Name': 'firstName',
+                    'Last Name': 'lastName',
+                    'Email': 'emails',
+                    'Username': 'usernames',
+                    'Password': 'passwords',
+                    'Domain': 'domain',
+                    'IP Address': 'ips',
+                    'ASN Number': 'asn',
+                    'ASN Name': 'asnOrg',
+                    'Continent': 'continent',
+                    'Country': 'country',
+                    'Phone': 'phoneNumbers',
+                    'Address': 'address',
+                    'License Plate Number': 'VRN',
+                    'Birth Year': 'birthYear',
+                    'VIN': 'vin',
+                    'City': 'city',
+                    'State': 'state',
+                    'Zip': 'zipCode',
+                    'Source': 'source'
+                }
+            }),
+            mounted() {
+                // Check if wallet is in local storage
+                if (localStorage.getItem('walletId')) {
+                    console.log('wallet found')
+                    this.walletId = localStorage.getItem('walletId')
+                    // Get balance
+                    fetch(`/wallet/${this.walletId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(`wallet balance: ${data.credits}`)
+                            this.balance = data.credits
+                            this.creditStr = data.credits.toString()
+                        })
+                } else {
+                    // Create a new wallet ID (uuid)
+                    this.walletId = this.uuidv4()
+                    console.log('wallet created: '+this.walletId)
+                    localStorage.setItem('walletId', this.walletId)
+                    this.balance = 0
+                    this.creditStr = '0.0'
+
+                    // Get balance
+                    fetch(`/wallet/${this.walletId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(`wallet balance: ${data.credits}`)
+                            this.balance = data.credits
+                            this.creditStr = data.credits.toString()
+                        })
+                        
+                }
+            },
+            methods: {
+                updateWalletID(id) {
+                    if (typeof id === 'string') {
+                        this.walletId = id
+                        console.log('wallet updated: '+id)
+                        localStorage.setItem('walletId', id)
+                    }
+                },
+                addQuery() {
+                    // Limit 5 queries
+                    if (this.queries.length >= 5) {
+                        alert('Max 5 fields per query')
+                    } else {
+                        this.queries.push({ field: 'First Name', value: '' })
+                    }
+                },
+                goToMap() {
+                    window.location.href = `/map`
+                },
+                isMobile() {
+                    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                        return true
+                    } else {
+                        return false
+                    }
+                },
+                uuidv4() {
+                    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                    );
+                },
+                doFillWallet() {
+                    const walletId = this.walletId
+                    // 1USD = 100 Credits
+                    const amount = this.walletFill * 100
+
+                    // Check if amount is valid
+                    if (amount < 100) {
+                        alert('Minimum $1')
+                        return
+                    }
+
+                    // Check if wallet is valid
+                    if (walletId.length !== 36) {
+                        alert('Invalid wallet ID')
+                        return
+                    }
+
+                    window.location = `/fillWallet/${walletId}/${amount}`
+                },
+                copyWalletId() {
+                    // Method 1
+                    const el = document.createElement('textarea');
+                    el.value = this.walletId;
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+
+                    // Method 2
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(this.walletId)
+                    }
+                    
+                    // Method 3
+                    const input = document.getElementById('walletId');
+                    input.focus();
+                    input.select();
+                    document.execCommand('copy');                    
+                },
+                buildAndSendQuery() {
+                    let query = ''
+                    this.queries.forEach((q, idx) => {
+                        const field = this.queryFieldMap[q.field];
+                        const value = q.value;
+
+                        if (q.not) {
+                            if (idx === 0) {
+                                query += `not${field}=${q.value}`;
+                            } else {
+                                query += `&not${field}=${q.value}`;
+                            }
+                        } else {
+                            if (idx === 0) {
+                                query += `${field}=${q.value}`;
+                            } else {
+                                query += `&${field}=${q.value}`;
+                            }
+                        }
+
+                        
+
+                        if (q.extendedSearch && field === "passwords") {
+                            this.hashTypes.forEach((hashType) => {
+                                if (hashType === 'BCrypt') {
+                                    for (let i = 0; i <= 15; i++) {
+                                        console.log(`Generating ${hashType} hash (rotation ${i}) for "${value}"...`)
+                                        const hashValue = dcodeIO.bcrypt.hashSync(value, i);
+                                        console.log(`${hashType} for "${value}" is "${hashValue}"`)
+                                        query += `&passwords=${hashValue}`;
+                                    }
+                                } else {
+                                    console.log(`Generating ${hashType} hash for ${value}...`)
+                                    const hashValue = CryptoJS[hashType](value).toString();
+                                    console.log(`${hashType} for ${value} is ${hashValue}`)
+                                    query += `&passwords=${hashValue}`;
+                                }
+                            });
+                        }
+
+                        if (this.exact) {
+                            query += `&exact=true`;
+                        }
+                    });
+
+
+                    // Send query
+                    window.location.href = `/records?${query}`
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

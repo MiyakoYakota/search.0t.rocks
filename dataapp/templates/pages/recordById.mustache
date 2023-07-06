@@ -1,0 +1,41 @@
+<html>
+<head>
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Record Report - {{id}}" />
+  <meta name="description" content="Database Record Report {{#record}}{{key}}: {{value}} {{/record}}">
+  <meta property="og:description" content="Database Record Report {{#record}}{{key}}: {{value}} {{/record}}" />
+  <meta property="og:site_name" content="Database Search" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Language" content="en" />
+  <meta name="robots" content="index, follow">
+  <title>Record Report - {{id}}</title>
+</head>
+<body>
+<h1>Record Report</h1>
+<table>
+{{#record}}
+  <tr>
+    <th>{{key}}</th>
+    <td>{{value}}</td>
+  </tr>
+{{/record}}
+</table>
+
+<br />
+<a href='/visualize?id={{id}}' rel="nofollow">Visualize</a>
+<br />
+<br />
+
+<h3>Related Records</h3>
+
+{{#related}}
+<dl>
+    <dt><a href="/documents/by_id/{{id}}">{{id}}</a></dt>
+    {{#record}}
+      <dd>{{key}}: {{value}}</dd>
+    {{/record}}
+</dl>
+{{/related}}
+
+
+</html>
