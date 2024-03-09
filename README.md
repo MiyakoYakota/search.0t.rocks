@@ -1,17 +1,17 @@
 # Zero Trust Search Engine
 
-This repository contains all the code nessecary to create your own version of https://search.0t.rocks.
+This repository contains all the code necessary to create your own version of https://search.0t.rocks.
 
 
 ### Quickstart
 To get your search engine running quickly on a single Linux host:
  1. Install Docker with Docker Compose
  2. Run `docker compose build; docker compose up`
- 3. Run `bash start.sh`
+ 3. Run `bash run.sh`
  4. Visit `http://your-ip:3000`
 
 ### Converting Data
-This is the hard part and completely up to you. You need to convert data into a standard format before it can be imported. See `sample.json` for the example data.
+This is the hard part and completely up to you. You need to convert data into a standard format before it can be imported. See `sample.jsonl` for the example data.
 
 ### Importing Data
 Data imports are done using the SimplePostTool included with Solr. You can download a copy of the **binary release** [here](https://solr.apache.org/downloads.html), and import data with the following command after extracting Solr:
