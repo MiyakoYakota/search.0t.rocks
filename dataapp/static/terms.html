@@ -1,17 +1,8 @@
-<pre>I'll try to keep this simple. I don't like words.
-
-By using this search engine, you understand that:
-<ul>
-    <li>It's not illegal for you to access this data in your jurisdiction.</li>
-    <li>If you use it for illegal purposes it is <em>your</em> responsibility for doing so.</li>
-    <li>It's completely possible for me to see what you search.</li>
-</ul>
-
-By using the automated removal tool, you understand that:
-<ul>
-    <li>Everything on this website is public data. Removing it from my website does not remove it from the rest of the internet.</li>
-    <li>There is a free option available for removals, as described in the <a href='/faq'>FAQ</a>.</li>
-    <li>It may take up to 2 hours for removed data to be purged from any cached versions of this website.</li>
-    <li>If a previously unindexed data breached gets indexed in the future, your data may re-appear from a different source.</li>
-</ul>
-</pre>
+<!doctype html>
+<!-- Modified for the 2026 modernization; see NOTICE and CHANGELOG.md. -->
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive"><meta name="color-scheme" content="light dark"><meta name="referrer" content="no-referrer">
+<link rel="stylesheet" href="/assets/app.css">
+<title>Data handling · Zero Trust Search</title>
+</head><body><header class="site-header"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">ZT</span>Zero Trust Search</a><nav aria-label="Main navigation"><a href="/">Search</a><a href="/map">Spatial</a><a href="/faq">Guide</a></nav></header><main class="container prose"><div class="page-heading"><p class="eyebrow">INSTANCE INFORMATION</p><h1>Data handling</h1><p class="lead">This software runs against a collection selected by its operator.</p></div><section class="panel"><h2>Application behavior</h2><p>The application sends search terms to its configured Solr backend. It displays returned records to authorized users. Browser assets are served by this instance, and this version includes no analytics, advertising, payment service, or cloud export integration.</p><h2>Local traces</h2><p>Search terms can appear in the browser's history because search uses GET requests. HTTP responses disable caching, but that does not erase history or stop screenshots. Reverse proxies, infrastructure, backups, and monitoring have their own logging and retention settings.</p><h2>Operator responsibilities</h2><p>The instance operator controls datasets, access, lawful use, retention, corrections, deletion, and incident handling. Use only data you are authorized to process. Configure TLS for remote access and a clear operator contact before importing real records.</p><h2>Software license</h2><p>The repository is distributed under Apache License 2.0. The license and its warranty provisions are in the repository. This page describes software behavior; it is not a tailored privacy policy or a promise about a particular deployment.</p></section></main><footer class="site-footer"><span>Restricted analyst workspace</span><a href="/terms">Data handling</a></footer></body></html>

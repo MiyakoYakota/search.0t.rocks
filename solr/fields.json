@@ -1,0 +1,325 @@
+[
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "accuracy_radius",
+    "type": "pint",
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "address",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "asn",
+    "type": "pint",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "asnOrg",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "autoBody",
+    "type": "string",
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "autoClass",
+    "type": "string",
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "autoMake",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "autoModel",
+    "type": "string",
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "autoYear",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "birthYear",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "birthMonth",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "birthday",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "city",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "continent",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "country",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "dob",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "domain",
+    "type": "text_identifier",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "emails",
+    "type": "text_identifier",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "ethnicity",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "firstName",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "middleName",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "gender",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": false,
+    "name": "income",
+    "type": "string",
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "ips",
+    "type": "string",
+    "multiValued": true,
+    "omitNorms": true,
+    "omitTermFreqAndPositions": true,
+    "sortMissingLast": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "lastName",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "latLong",
+    "type": "location",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": false,
+    "name": "line",
+    "type": "string",
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": false,
+    "name": "links",
+    "type": "string",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "location",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": false,
+    "name": "notes",
+    "type": "string",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": false,
+    "name": "party",
+    "type": "string",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "phoneNumbers",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": false,
+    "name": "photos",
+    "type": "string",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "source",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "state",
+    "type": "string",
+    "docValues": true,
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "usernames",
+    "type": "string",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "vin",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "zipCode",
+    "type": "string",
+    "multiValued": false
+  },
+  {
+    "stored": true,
+    "indexed": true,
+    "name": "VRN",
+    "type": "text_general",
+    "multiValued": true
+  },
+  {
+    "name": "breachName",
+    "type": "string",
+    "stored": true,
+    "indexed": true,
+    "multiValued": false
+  },
+  {
+    "name": "breachDate",
+    "type": "string",
+    "stored": true,
+    "indexed": false,
+    "multiValued": false
+  },
+  {
+    "name": "sourceReference",
+    "type": "string",
+    "stored": true,
+    "indexed": false,
+    "multiValued": false
+  },
+  {
+    "name": "dataClasses",
+    "type": "string",
+    "stored": true,
+    "indexed": false,
+    "multiValued": true
+  },
+  {
+    "name": "credentialExposure",
+    "type": "boolean",
+    "stored": true,
+    "indexed": false,
+    "multiValued": false
+  }
+]

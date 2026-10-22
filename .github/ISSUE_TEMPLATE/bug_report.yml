@@ -1,0 +1,36 @@
+name: Bug report
+description: Report a reproducible application or deployment failure.
+title: '[Bug]: '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic data in reports. Do not post access tokens, personal records, or security exploit details.
+        Read SECURITY.md for vulnerability reporting. These forms become available only when Issues is enabled.
+  - type: input
+    id: version
+    attributes:
+      label: Commit or release
+      description: Include the commit SHA and Node/Docker versions used.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide minimal commands or requests using synthetic examples.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and redacted logs
+      description: Remove credentials, query terms, and record values.
+    validations:
+      required: true

@@ -1,116 +1,115 @@
-version: '3'
+# Modified for the 2026 modernization; see NOTICE and CHANGELOG.md.
+name: zero-trust-search
+
+x-admin-task: &admin-task
+  image: node:24.22.1-bookworm-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205
+  profiles: [tools]
+  user: node
+  working_dir: /workspace
+  entrypoint: [node]
+  environment:
+    SOLR_URL: http://solr:8983/solr
+    SOLR_COLLECTION: BigData
+  volumes:
+    - ./scripts:/workspace/scripts:ro
+    - ./solr:/workspace/solr:ro
+    - ./samples:/workspace/samples:ro
+  networks: [backend]
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  depends_on:
+    solr:
+      condition: service_healthy
 
 services:
   web:
-    build: dataapp
-    ports:
-      - "3000:3000"
-    networks:
-      - solr
-
-  solr1:
-    image: solr:9.2.1
-    container_name: solr1
-    ports:
-     - "8981:8983"
+    build:
+      context: ./dataapp
+      target: runtime
+    init: true
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
-    networks:
-      - solr
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      API_TOKEN: ${API_TOKEN:?Set API_TOKEN in .env or run bash run.sh}
+      SOLR_URL: http://solr:8983/solr
+      SOLR_COLLECTION: BigData
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+    networks: [frontend, backend]
     depends_on:
-      - zoo1
-      - zoo2
-      - zoo3
+      solr:
+        condition: service_healthy
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    restart: unless-stopped
+    stop_grace_period: 20s
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/health/ready',{signal:AbortSignal.timeout(4000)}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
-  solr2:
-    image: solr:9.2.1
-    container_name: solr2
-    ports:
-     - "8982:8983"
+  solr:
+    image: solr:9.11.0-slim@sha256:3b70e899b1cca19729c49c110a1aa8e937f727be4cca3ad07ea67f151f5cc07d
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
-    networks:
-      - solr
+      ZK_HOST: zookeeper:2181
+      SOLR_HEAP: ${SOLR_HEAP:-512m}
+      SOLR_HOST: solr
+    volumes:
+      - solr_data_v2:/var/solr
+    networks: [backend]
     depends_on:
-      - zoo1
-      - zoo2
-      - zoo3
+      zookeeper:
+        condition: service_healthy
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 60s
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, --max-time, "5", "http://localhost:8983/solr/admin/info/system?wt=json"]
+      interval: 10s
+      timeout: 6s
+      retries: 12
+      start_period: 30s
 
-  solr3:
-    image: solr:9.2.1
-    container_name: solr3
-    ports:
-     - "8983:8983"
+  zookeeper:
+    image: zookeeper:3.9.6@sha256:5bad433c71701a1d788b4df86c921d91bfb65c23a1443bcb18a80f40373ae9d9
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
-    networks:
-      - solr
-    depends_on:
-      - zoo1
-      - zoo2
-      - zoo3
+      ZOO_4LW_COMMANDS_WHITELIST: ruok,srvr,mntr
+      ZOO_AUTOPURGE_PURGEINTERVAL: 24
+      ZOO_ADMINSERVER_ENABLED: "false"
+    volumes:
+      - zookeeper_data_v2:/data
+      - zookeeper_log_v2:/datalog
+    networks: [backend]
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, zkServer.sh, status]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
 
-  solr4:
-    image: solr:9.2.1
-    container_name: solr4
-    ports:
-     - "8984:8983"
-    environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
-    networks:
-      - solr
-    depends_on:
-      - zoo1
-      - zoo2
-      - zoo3
+  bootstrap:
+    <<: *admin-task
+    command: [scripts/bootstrap-solr.mjs]
 
-  zoo1:
-    image: zookeeper
-    container_name: zoo1
-    restart: always
-    hostname: zoo1
-    ports:
-      - 2181:2181
-      - 7001:7000
-    environment:
-      ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
-      ZOO_4LW_COMMANDS_WHITELIST: mntr, conf, ruok
-      ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"
-    networks:
-      - solr
-
-  zoo2:
-    image: zookeeper
-    container_name: zoo2
-    restart: always
-    hostname: zoo2
-    ports:
-      - 2182:2181
-      - 7002:7000
-    environment:
-      ZOO_MY_ID: 2
-      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
-      ZOO_4LW_COMMANDS_WHITELIST: mntr, conf, ruok
-      ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"
-    networks:
-      - solr
-
-  zoo3:
-    image: zookeeper
-    container_name: zoo3
-    restart: always
-    hostname: zoo3
-    ports:
-      - 2183:2181
-      - 7003:7000
-    environment:
-      ZOO_MY_ID: 3
-      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
-      ZOO_4LW_COMMANDS_WHITELIST: mntr, conf, ruok
-      ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"
-    networks:
-      - solr
+  import-sample:
+    <<: *admin-task
+    command: [scripts/import-sample.mjs]
 
 networks:
-  solr:
+  frontend:
+  backend:
+    internal: true
+
+volumes:
+  solr_data_v2:
+  zookeeper_data_v2:
+  zookeeper_log_v2:

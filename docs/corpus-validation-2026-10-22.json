@@ -1,0 +1,636 @@
+{
+  "status": "passed",
+  "stage": "complete",
+  "source": {
+    "bytes": 12208094,
+    "sha256Before": "f302ea3a8cab2461c4b001ab16a30f9be1adbb34745ee8e8c54fc64328c68410",
+    "sha256After": "f302ea3a8cab2461c4b001ab16a30f9be1adbb34745ee8e8c54fc64328c68410"
+  },
+  "importedRows": 75739,
+  "completedBatches": 379,
+  "projection": {
+    "rows": 75739,
+    "rowsWithOnlyGeneratedId": 485,
+    "fields": {
+      "id": {
+        "occurrences": 75739,
+        "inputValues": 75739,
+        "shapes": {
+          "string": 75739
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 75739,
+        "omittedValues": 75739,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "emails": {
+        "occurrences": 63998,
+        "inputValues": 64539,
+        "shapes": {
+          "array": 61998,
+          "string": 2000
+        },
+        "arrayMin": 1,
+        "arrayMax": 9,
+        "indexedOccurrences": 63998,
+        "indexedValues": 64539,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "firstName": {
+        "occurrences": 21404,
+        "inputValues": 21404,
+        "shapes": {
+          "string": 21404
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 21404,
+        "indexedValues": 21404,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "lastName": {
+        "occurrences": 21177,
+        "inputValues": 21177,
+        "shapes": {
+          "string": 21177
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 21176,
+        "indexedValues": 21176,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 1,
+        "rejectedValues": 1
+      },
+      "address": {
+        "occurrences": 8577,
+        "inputValues": 8577,
+        "shapes": {
+          "string": 8577
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 8577,
+        "indexedValues": 8577,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "address_search": {
+        "occurrences": 8577,
+        "inputValues": 8577,
+        "shapes": {
+          "string": 8577
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 8577,
+        "omittedValues": 8577,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "city": {
+        "occurrences": 13457,
+        "inputValues": 13457,
+        "shapes": {
+          "string": 13457
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 13457,
+        "indexedValues": 13457,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "city_search": {
+        "occurrences": 13270,
+        "inputValues": 13270,
+        "shapes": {
+          "string": 13270
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 13270,
+        "omittedValues": 13270,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "state": {
+        "occurrences": 13601,
+        "inputValues": 13601,
+        "shapes": {
+          "string": 13601
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 13600,
+        "indexedValues": 13600,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 1,
+        "rejectedValues": 1
+      },
+      "zipCode": {
+        "occurrences": 7978,
+        "inputValues": 7978,
+        "shapes": {
+          "string": 7978
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 7978,
+        "indexedValues": 7978,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "autoYear": {
+        "occurrences": 2474,
+        "inputValues": 2474,
+        "shapes": {
+          "string": 2474
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 2474,
+        "indexedValues": 2474,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "autoClass": {
+        "occurrences": 774,
+        "inputValues": 774,
+        "shapes": {
+          "string": 774
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 774,
+        "indexedValues": 774,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "autoMake": {
+        "occurrences": 2416,
+        "inputValues": 2416,
+        "shapes": {
+          "string": 2416
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 2416,
+        "indexedValues": 2416,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "autoModel": {
+        "occurrences": 2400,
+        "inputValues": 2400,
+        "shapes": {
+          "string": 2400
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 2400,
+        "indexedValues": 2400,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "autoBody": {
+        "occurrences": 774,
+        "inputValues": 774,
+        "shapes": {
+          "string": 774
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 774,
+        "indexedValues": 774,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "vin": {
+        "occurrences": 2425,
+        "inputValues": 2425,
+        "shapes": {
+          "string": 2425
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 2425,
+        "indexedValues": 2425,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "gender": {
+        "occurrences": 12337,
+        "inputValues": 12337,
+        "shapes": {
+          "string": 10974,
+          "array": 1363
+        },
+        "arrayMin": 1,
+        "arrayMax": 1,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 12337,
+        "omittedValues": 12337,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "income": {
+        "occurrences": 844,
+        "inputValues": 844,
+        "shapes": {
+          "string": 844
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 844,
+        "omittedValues": 844,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "usernames": {
+        "occurrences": 16628,
+        "inputValues": 16677,
+        "shapes": {
+          "array": 16628
+        },
+        "arrayMin": 1,
+        "arrayMax": 6,
+        "indexedOccurrences": 16623,
+        "indexedValues": 16672,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 5,
+        "rejectedValues": 5
+      },
+      "photos": {
+        "occurrences": 2000,
+        "inputValues": 2095,
+        "shapes": {
+          "array": 2000
+        },
+        "arrayMin": 1,
+        "arrayMax": 14,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 2000,
+        "omittedValues": 2095,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "links": {
+        "occurrences": 9812,
+        "inputValues": 13848,
+        "shapes": {
+          "array": 9812
+        },
+        "arrayMin": 1,
+        "arrayMax": 2,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 9812,
+        "omittedValues": 13848,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "birthMonth": {
+        "occurrences": 1847,
+        "inputValues": 1847,
+        "shapes": {
+          "string": 1847
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 1847,
+        "indexedValues": 1847,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "birthYear": {
+        "occurrences": 1850,
+        "inputValues": 1850,
+        "shapes": {
+          "string": 1850
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 1850,
+        "indexedValues": 1850,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "ethnicity": {
+        "occurrences": 2000,
+        "inputValues": 2000,
+        "shapes": {
+          "string": 2000
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 2000,
+        "omittedValues": 2000,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "latLong": {
+        "occurrences": 2000,
+        "inputValues": 2000,
+        "shapes": {
+          "string": 2000
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 2000,
+        "indexedValues": 2000,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "middleName": {
+        "occurrences": 2203,
+        "inputValues": 2203,
+        "shapes": {
+          "string": 2203
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 2203,
+        "indexedValues": 2203,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "phoneNumbers": {
+        "occurrences": 9744,
+        "inputValues": 10209,
+        "shapes": {
+          "array": 9744
+        },
+        "arrayMin": 1,
+        "arrayMax": 9,
+        "indexedOccurrences": 9707,
+        "indexedValues": 10172,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 37,
+        "rejectedValues": 37
+      },
+      "passwords": {
+        "occurrences": 15877,
+        "inputValues": 18981,
+        "shapes": {
+          "array": 13877,
+          "string": 2000
+        },
+        "arrayMin": 1,
+        "arrayMax": 3,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 15877,
+        "omittedValues": 18981,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "VRN": {
+        "occurrences": 1999,
+        "inputValues": 4933,
+        "shapes": {
+          "array": 1999
+        },
+        "arrayMin": 1,
+        "arrayMax": 44,
+        "indexedOccurrences": 1999,
+        "indexedValues": 4933,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "notes": {
+        "occurrences": 1000,
+        "inputValues": 4572,
+        "shapes": {
+          "array": 1000
+        },
+        "arrayMin": 0,
+        "arrayMax": 16,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 1000,
+        "omittedValues": 4572,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "location": {
+        "occurrences": 3014,
+        "inputValues": 3014,
+        "shapes": {
+          "string": 3014
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 3014,
+        "indexedValues": 3014,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "source": {
+        "occurrences": 1000,
+        "inputValues": 1000,
+        "shapes": {
+          "string": 1000
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 1000,
+        "indexedValues": 1000,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "dob": {
+        "occurrences": 1404,
+        "inputValues": 1404,
+        "shapes": {
+          "array": 1201,
+          "string": 203
+        },
+        "arrayMin": 1,
+        "arrayMax": 1,
+        "indexedOccurrences": 1404,
+        "indexedValues": 1404,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "party": {
+        "occurrences": 2029,
+        "inputValues": 2029,
+        "shapes": {
+          "string": 2029
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 0,
+        "indexedValues": 0,
+        "omittedOccurrences": 2029,
+        "omittedValues": 2029,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      },
+      "birthday": {
+        "occurrences": 657,
+        "inputValues": 657,
+        "shapes": {
+          "string": 657
+        },
+        "arrayMin": null,
+        "arrayMax": null,
+        "indexedOccurrences": 657,
+        "indexedValues": 657,
+        "omittedOccurrences": 0,
+        "omittedValues": 0,
+        "rejectedOccurrences": 0,
+        "rejectedValues": 0
+      }
+    },
+    "transformations": {
+      "generated_test_id": 75739,
+      "scalar_to_array": 74460,
+      "whitespace_trimmed": 63
+    },
+    "rejections": {
+      "blank_string": 44
+    },
+    "omittedFields": {
+      "original_id_replaced": 75739,
+      "not_in_schema": 21847,
+      "not_display_allowed": 30022,
+      "credential_or_raw_field": 15877
+    }
+  },
+  "rows": {
+    "physicalLines": 75739,
+    "blankLines": 0,
+    "parsedRows": 75739,
+    "rejectedRows": 0
+  },
+  "inventoryMs": 883.88,
+  "originalIds": {
+    "distinct": 75739,
+    "duplicateOccurrences": 0,
+    "invalidOrMissing": 0,
+    "replacedWithUniqueTestIds": 75739
+  },
+  "importMs": 4317.09,
+  "indexedRows": 75739,
+  "authentication": {
+    "bearer": true,
+    "basic": true,
+    "missingTokenRejected": true,
+    "wrongTokenRejected": true
+  },
+  "recordReads": {
+    "samples": 101,
+    "p50Ms": 3.03,
+    "p95Ms": 4.72,
+    "comparedFieldValues": 407,
+    "mismatches": 0
+  },
+  "exactIdentifierLookups": {
+    "emails": {
+      "distinctIndexedIdentifiers": 63777,
+      "selectedIdentifiers": 64,
+      "queries": 192,
+      "caseVariantQueries": 64,
+      "fragmentQueries": 64,
+      "latency": {
+        "samples": 192,
+        "p50Ms": 2.08,
+        "p95Ms": 4.53
+      }
+    },
+    "domain": {
+      "distinctIndexedIdentifiers": 0,
+      "selectedIdentifiers": 0,
+      "queries": 0,
+      "caseVariantQueries": 0,
+      "fragmentQueries": 0,
+      "result": "not_present_in_corpus"
+    },
+    "usernames": {
+      "distinctIndexedIdentifiers": 16649,
+      "selectedIdentifiers": 64,
+      "queries": 191,
+      "caseVariantQueries": 63,
+      "fragmentQueries": 64,
+      "latency": {
+        "samples": 191,
+        "p50Ms": 1.69,
+        "p95Ms": 2.97
+      }
+    }
+  },
+  "caseFoldSampling": {
+    "asciiEmailAndDomainOnly": true,
+    "nonAsciiCaseFoldIdentifiersExcluded": 1,
+    "usernamesCaseSensitive": true
+  },
+  "logging": {
+    "log4jAllOffBeforeAndAfter": true,
+    "httpRequestLogModuleAbsent": true
+  },
+  "environment": {
+    "node": "v24.22.1",
+    "solr": "9.11.0",
+    "execution": "single-node-loopback-sequential"
+  }
+}

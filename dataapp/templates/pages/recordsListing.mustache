@@ -1,36 +1,8 @@
-<html>
-<!-- Lists all record's first names, at the bottom of the page there's options to choose a-z -->
-<head>
-  <meta property="og:type" content="article" />
-  <meta property="og:title" content="Record Report" />
-  <meta property="og:description" content="Database Record Report {{#record}}{{key}}: {{value}} {{/record}}" />
-  <meta property="og:site_name" content="Database Search" />
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Language" content="en" />
-  <meta name="robots" content="index, follow">
-  <title>Records Result - {{count}} Results</title>
-
-  <script>
-    function exportMore() {
-      const encodedUrl = encodeURIComponent(window.location.href);
-      window.location.href = `/exports?url=${encodedUrl}`;
-    }
-  </script>
-</head>
-<body>
-    <h1>Records Result</h1>
-    <h2>{{resultCount}} Hits - {{count}} Results Shown <button onclick="exportMore()">Click here for more</button></h2>
-    {{#records}}
-    <div class="record">
-        <dl>
-            <dt>
-            <a href="/documents/by_id/{{ id }}">{{id}}</a> - <a href='/visualize?id={{id}}' rel="nofollow">(Visualize)</a> - <a href="/faq" rel="nofollow">(See FAQ about Removal)</a></dt>
-            {{#fields}}
-            
-            <dd> {{ . }}</a></dd>
-            {{/fields}}
-        </dl>
-    </div>
-    {{/records}}
-</body>
-</html>
+<!doctype html>
+<!-- Modified for the 2026 modernization; see NOTICE and CHANGELOG.md. -->
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive"><meta name="color-scheme" content="light dark"><meta name="referrer" content="no-referrer">
+<link rel="stylesheet" href="/assets/app.css">
+<title>Search results · Zero Trust Search</title>
+</head><body><header class="site-header"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">ZT</span>Zero Trust Search</a><nav aria-label="Main navigation"><a href="/">Search</a><a href="/map">Spatial</a><a href="/faq">Guide</a></nav></header><main class="container"><div class="page-heading"><a class="back-link" href="/">← New search</a><p class="eyebrow">INVESTIGATION RESULTS</p><h1>Search results</h1><p class="lead">{{resultCount}} matching records · {{count}} shown</p></div><section aria-label="Search results">{{#records}}<article class="panel record-card"><div class="section-heading"><h2><a href="/documents/by_id/{{encodedId}}">{{id}}</a></h2><a class="text-link" href="/documents/by_id/{{encodedId}}">Open record →</a></div><ul class="record-fields">{{#fields}}<li>{{.}}</li>{{/fields}}</ul></article>{{/records}}{{^records}}<div class="panel empty-state"><h2>No matching records</h2><p>Try fewer fields or check that your dataset has been imported.</p><a class="button" href="/">Change search</a></div>{{/records}}</section><nav class="pagination" aria-label="Result pages">{{#previousUrl}}<a class="button secondary" href="{{previousUrl}}">← Previous page</a>{{/previousUrl}}{{#nextUrl}}<a class="button" href="{{nextUrl}}">Next page →</a>{{/nextUrl}}</nav><p class="muted">Results are bounded. The API supports pagination; see the <a href="/faq">query guide</a>.</p></main><footer class="site-footer"><span>Restricted analyst workspace</span><a href="/terms">Data handling</a></footer></body></html>

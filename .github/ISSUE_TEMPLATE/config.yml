@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security reporting policy
+    url: https://github.com/Legatto2/search.0t.rocks/blob/main/SECURITY.md
+    about: Read this policy before reporting a vulnerability. Do not publish sensitive data in an issue.

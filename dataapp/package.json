@@ -1,36 +1,35 @@
 {
-  "name": "dataapp",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/pm2 start index.ts",
-    "dev": "ts-node index.ts"
+  "name": "zero-trust-search",
+  "version": "2.0.0-dev.0",
+  "private": true,
+  "description": "A private breach-intelligence search workspace for authorized cybersecurity analysts.",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=24.22.1 <25",
+    "npm": ">=11 <13"
   },
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "clean": "node -e \"for (const p of ['dist','dist-test']) require('node:fs').rmSync(p,{recursive:true,force:true})\"",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.test.json --noEmit",
+    "test": "tsc -p tsconfig.test.json && node --test dist-test/test/*.test.js",
+    "check:browser": "node --check static/assets/search.js && node --check static/assets/spatial.js && node --check static/assets/explorer.js",
+    "check": "npm run typecheck && npm run check:browser && npm test && npm run build",
+    "start": "node dist/index.js",
+    "dev": "npm run build && node --watch dist/index.js",
+    "watch": "tsc -p tsconfig.json --watch",
+    "audit:production": "npm audit --omit=dev --audit-level=high"
+  },
+  "license": "Apache-2.0",
   "dependencies": {
-    "@types/coinbase-commerce-node": "^1.0.6",
-    "@types/express": "^4.17.15",
-    "@types/ip": "^1.1.0",
-    "@types/lodash": "^4.14.191",
-    "@types/mustache": "^4.2.2",
-    "@types/uuid": "^9.0.1",
-    "axios": "^1.2.2",
-    "body-parser": "^1.20.2",
-    "coinbase-commerce-node": "^1.0.4",
-    "express": "^4.18.2",
-    "ip": "^1.1.8",
-    "lodash": "^4.17.21",
-    "mustache": "^4.2.0",
-    "mustache.js": "^1.0.0",
-    "node-fetch": "^3.3.1",
-    "pm2": "^5.2.2",
-    "requests": "^0.3.0",
-    "simple-statistics": "^7.8.3",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.9.4",
-    "uuid": "^9.0.0"
+    "express": "5.3.0",
+    "mustache": "4.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/mustache": "4.2.6",
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
   }
 }

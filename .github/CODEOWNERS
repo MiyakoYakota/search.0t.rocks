@@ -1,0 +1,10 @@
+# Review ownership. GitHub enforcement must be enabled separately in a ruleset.
+* @Legatto2
+/.github/ @Legatto2
+/SECURITY.md @Legatto2
+/LICENSE @Legatto2
+/docker-compose.yml @Legatto2
+/dataapp/Dockerfile @Legatto2
+/dataapp/package*.json @Legatto2
+/scripts/ @Legatto2
+/solr/ @Legatto2

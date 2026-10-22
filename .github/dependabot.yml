@@ -1,0 +1,38 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /dataapp
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/Chicago
+    open-pull-requests-limit: 2
+    groups:
+      runtime-patches:
+        dependency-type: production
+        update-types: [minor, patch]
+      development-patches:
+        dependency-type: development
+        update-types: [minor, patch]
+  - package-ecosystem: docker
+    directory: /dataapp
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 1
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 1
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 1
+    groups:
+      actions:
+        patterns: ['*']

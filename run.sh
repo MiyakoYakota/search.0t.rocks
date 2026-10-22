@@ -1,64 +1,44 @@
-read -p "Enter the IP address of your Solr server [127.0.0.1]: " ip
-ip=${name:-"127.0.0.1"}
+#!/usr/bin/env bash
+# Modified for the 2026 modernization; see NOTICE and CHANGELOG.md.
+set -euo pipefail
 
-read -p "Enter the Port address of your Solr server [8983]: " port
-port=${name:-"8983"}
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
-read -p "Enter the number of shards (each shard can handle 2,147,483,519 documents. If you don't know, use one per Solr host. You can add more later, but it will require learning Solr's SHARD command.) [4]: " shards
-shards=${name:-"4"}
+case "${1:-}" in
+  ""|--sample) ;;
+  --help|-h)
+    printf '%s\n' 'Usage: bash run.sh [--sample]' \
+      'Start the local stack and initialize its schema. --sample imports two synthetic records.' \
+      'Requires Docker Engine/Desktop and Docker Compose v2. No existing volume is removed.'
+    exit 0
+    ;;
+  *) printf '%s\n' 'Unknown argument. Use bash run.sh --help.' >&2; exit 2 ;;
+esac
+if (( $# > 1 )); then
+  printf '%s\n' 'Too many arguments. Use bash run.sh --help.' >&2
+  exit 2
+fi
 
-read -p "Enter the replication factor (redundant copies of shards accross hosts. 1 = No redundancy) [1]: " replicationFactor
-replicationFactor=${name:-"1"}
+command -v docker >/dev/null || { printf '%s\n' 'Install Docker with Compose v2 first.' >&2; exit 1; }
+docker compose version >/dev/null
 
-echo "Creating Database"
+# Never overwrite an operator-provided secret or print it into terminal/CI logs.
+if [[ ! -f .env && -z "${API_TOKEN:-}" ]]; then
+  token=$(docker run --rm --network none \
+    node:24.22.1-bookworm-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205 \
+    node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("hex"))')
+  [[ "$token" =~ ^[a-f0-9]{64}$ ]] || { printf '%s\n' 'Could not generate an access token.' >&2; exit 1; }
+  (umask 077; set -o noclobber; printf 'API_TOKEN=%s\n' "$token" > .env)
+  unset token
+  printf '%s\n' 'Created .env with a random access token. Keep this file private.'
+fi
 
-# Create collection for data
-curl "http://$ip:$port/solr/admin/collections?action=CREATE&name=BigData&numShards=$shards&replicationFactor=$replicationFactor&wt=json" 
-
-
-# Disable schemaless mode
-
-echo "Disabling schema-less mode"
-curl "http://$ip:$port/solr/BigData/config" -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
-
-# Add Schema
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"accuracy_radius","type":"pint"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"address","type":"text_general"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"asn","type":"pint","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"asnOrg","type":"text_general"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"autoBody","type":"string"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"autoClass","type":"string"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"autoMake","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"autoModel","type":"string"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"autoYear","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"birthYear","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"birthMonth","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"birthday","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"city","type":"text_general"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"continent","type":"text_general"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"country","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"dob","type":"text_general"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"domain","type":"text_general"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"emails","type":"text_general"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"ethnicity","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"firstName","type":"text_general","uninvertible":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"middleName","type":"text_general","uninvertible":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"gender","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"false","name":"income","type":"string"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"true","name":"ips","type":"string","multiValued":"true","omitNorms":"true","omitTermFreqAndPositions":"true","sortMissingLast":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"lastName","type":"text_general","uninvertible":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"true","name":"latLong","type":"location","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"false","uninvertible":"false","name":"line","type":"string"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"false","uninvertible":"false","name":"links","type":"string","multiValued":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"true","name":"location","type":"text_general"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"false","uninvertible":"false","name":"notes","type":"string","multiValued":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"false","uninvertible":"false","name":"party","type":"string","multiValued":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"passwords","type":"string","multiValued":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"phoneNumbers","type":"text_general"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"false","uninvertible":"false","name":"photos","type":"string","multiValued":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"source","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","uninvertible":"false","name":"state","type":"string","docValues":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"usernames","type":"text_general","uninvertible":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"vin","type":"text_general","uninvertible":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"zipCode","type":"string","uninvertible":"true"}}'
-curl 'http://$ip:$port/solr/BigData/schema?wt=json' -X POST -H 'Accept: application/json' --data-raw '{"add-field":{"stored":"true","indexed":"true","name":"VRN","type":"text_general","uninvertible":"true"}}'
+docker compose config --quiet
+docker compose up -d --wait --wait-timeout 180 solr
+docker compose run --rm bootstrap
+if [[ "${1:-}" == --sample ]]; then
+  docker compose run --rm import-sample
+fi
+docker compose up -d --build --wait --wait-timeout 120 web
+address=$(docker compose port web 3000)
+printf '%s\n' "Ready at http://$address. Browser username: operator; password: API_TOKEN from .env or your environment."

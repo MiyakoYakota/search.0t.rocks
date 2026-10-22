@@ -1,0 +1,16 @@
+[
+  {
+    "name": "text_identifier",
+    "class": "solr.TextField",
+    "analyzer": {
+      "tokenizer": {
+        "class": "solr.KeywordTokenizerFactory"
+      },
+      "filters": [
+        {
+          "class": "solr.LowerCaseFilterFactory"
+        }
+      ]
+    }
+  }
+]

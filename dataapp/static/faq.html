@@ -1,30 +1,8 @@
-<!DOCTYPE html>
-<head>
-    <title>Illicit Search FAQ</title>
-</head>
-<body>
-    <h1>FAQ:</h1>
-    <dl>
-        <dt>Is this legal?</dt>
-        <dd>Maybe. Depending on your region, it may be illegal to access this data. In the USA, it's not illegal to access leaked data.</dd><br />
-
-        <dt>I want my data removed!</dt>
-        <dd>You always contact me via email: <a href="mailto:miyako@miyako.rocks">miyako@miyako.rocks</a> or Telegram: <a href="https://t.me/miyakoyako">@miyakoyako</a> with a <em>reasonable</em> request for free removal. Unreasonable requests (i.e. "Delete every gmail address!" or "My uncle is a very powerful person delete my data or I will sue you" (yes this actually happened)) will be ignored and/or met with mockery.</dd><br />
-
-        <dt>This password is hashed, will you crack it for me?</dt>
-        <dd>No. There are many services that will crack passwords for you, free and paid.</dd><br />
-
-        <dt>This website is ugly!</dt>
-        <dd>lol ya</dd><br />
-
-        <dt>Are my requests being logged?</dt>
-        <dd>For all intents and purposes, Yes. It's impossible for any site to prove that user requests aren't being logged, and given that I'm using Cloudflare, I'm sure logs are being kept somewhere outside of my knowledge. That being said, I don't particularly care what you search.</dd><br />
-
-        <dt>Ok, but what data are you storing on me?</dt>
-        <dd>Access logs + analytical data.</dd><br />
-
-        <dt>Why is this free?</dt>
-        <dd>To spite <a href="/dear_peter">Peter Kleissner</a>. I make money from automated exports and donations.</dd>
-    </dl>
-    
-</body>
+<!doctype html>
+<!-- Modified for the 2026 modernization; see NOTICE and CHANGELOG.md. -->
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive"><meta name="color-scheme" content="light dark"><meta name="referrer" content="no-referrer">
+<link rel="stylesheet" href="/assets/app.css">
+<title>Query guide · Zero Trust Search</title>
+</head><body><header class="site-header"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">ZT</span>Zero Trust Search</a><nav aria-label="Main navigation"><a href="/">Search</a><a href="/map">Spatial</a><a href="/faq">Guide</a></nav></header><main class="container prose"><div class="page-heading"><p class="eyebrow">OPERATOR GUIDE</p><h1>Search with confidence.</h1><p class="lead">Breach intelligence for authorized cybersecurity analysts, professional investigators, and law-enforcement users.</p></div><section class="panel"><h2>Sign in</h2><p>For a browser login, use <code>operator</code> as the username and your configured API token as the password. API clients use the <code>Authorization: Bearer</code> header. Tokens in URLs and user-agent strings are not supported.</p><h2>Build a query</h2><p>Enter one or more values on the search page. Different fields are combined with AND. Repeating a field in the API combines its values with OR. Prefix a field with <code>not</code> to exclude values, but include at least one positive search field.</p><p>Values are literal phrases interpreted by the configured field analyzer. Email and domain fields match complete identifiers without case sensitivity in the new schema. Usernames match their exact stored case. Other text fields can be case-insensitive and tokenized; string fields use their stored representation. This does not promise byte-for-byte equality. Wildcards and raw Solr query syntax are not supported.</p><h2>Read results</h2><p>HTML search returns a bounded list. Add <code>wt=json</code> for JSON. Use <code>rows</code> and <code>start</code> for bounded pagination. The supported API contract and limits are documented in the repository.</p><h2>What data is included?</h2><p>Only a synthetic fixture is supplied. The operator must provide and maintain any other dataset. The application does not scrape, buy, enrich, or connect to a public people-search database.</p><h2>What changed?</h2><p>Legacy wallet, payment, bulk export, and automated relationship expansion endpoints are unavailable in this preview. The paid professional service requires new account, scope, billing, and audit controls. The inherited implementations were incomplete and unsafe to expose. External map layers and browser CDN dependencies have been removed.</p><h2>Remove or correct a record</h2><p>Contact the operator of this particular instance. The software repository does not control the operator's collection. Operators must establish a clear contact and retention process before accepting real data.</p></section></main><footer class="site-footer"><span>Restricted analyst workspace</span><a href="/terms">Data handling</a></footer></body></html>

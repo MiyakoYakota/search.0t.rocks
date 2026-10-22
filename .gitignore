@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-test/
+coverage/
+*.tsbuildinfo
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+# Operator data, generated exports and database backups do not belong in Git.
+backups/
+data/
+dataapp/exports/*.csv
+dataapp/exports/*.zip

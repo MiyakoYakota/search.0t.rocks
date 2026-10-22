@@ -1,0 +1,72 @@
+[
+  {
+    "id": "00000000-0000-4000-8000-000000000001",
+    "firstName": [
+      "Example"
+    ],
+    "lastName": [
+      "RecordOne"
+    ],
+    "emails": [
+      "Record-One@Example.Invalid"
+    ],
+    "usernames": [
+      "synthetic-record-one"
+    ],
+    "city": [
+      "Test City"
+    ],
+    "state": "TX",
+    "source": "synthetic-fixture",
+    "latLong": "0,0",
+    "notes": [
+      "Synthetic test record; not a real person."
+    ],
+    "domain": [
+      "example.invalid"
+    ],
+    "breachName": "Synthetic demonstration breach",
+    "breachDate": "2026-01-01",
+    "sourceReference": "synthetic-fixture-v1",
+    "dataClasses": [
+      "Email addresses",
+      "Usernames"
+    ],
+    "credentialExposure": false
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000002",
+    "firstName": [
+      "Example"
+    ],
+    "lastName": [
+      "RecordTwo"
+    ],
+    "emails": [
+      "record-two@example.invalid"
+    ],
+    "usernames": [
+      "synthetic-record-two"
+    ],
+    "city": [
+      "Test City"
+    ],
+    "state": "TX",
+    "source": "synthetic-fixture",
+    "latLong": "0,0.001",
+    "notes": [
+      "Synthetic test record; not a real person."
+    ],
+    "domain": [
+      "example.invalid"
+    ],
+    "breachName": "Synthetic demonstration breach",
+    "breachDate": "2026-01-01",
+    "sourceReference": "synthetic-fixture-v1",
+    "dataClasses": [
+      "Email addresses",
+      "Usernames"
+    ],
+    "credentialExposure": false
+  }
+]

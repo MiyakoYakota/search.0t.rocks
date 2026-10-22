@@ -1,0 +1,21 @@
+Zero Trust Search / search.0t.rocks
+
+This repository is derived from MiyakoYakota/search.0t.rocks:
+https://github.com/MiyakoYakota/search.0t.rocks
+
+The upstream application identified its operator as Illicit Services LTD.
+Upstream authors and contributors retain their copyright in their contributions.
+The original Apache License, Version 2.0 is preserved in LICENSE.
+
+The modernization preview changes the application, browser interface, dependency
+graph, deployment configuration, and development workflow. It is maintained in
+Legatto2/search.0t.rocks by Michael Heald and contributors. These changes do not
+claim original authorship of upstream work or affiliation with its former service.
+
+Historical operator-specific payments, correspondence, legal claims, and canary
+statements are not representations made by this fork. See docs/UPSTREAM.md for
+provenance and the compatibility notes.
+
+Apache Solr, Apache ZooKeeper, Node.js, Express, Mustache, TypeScript, and other
+third-party components retain their respective licenses and notices. Project
+licensing grants no rights to third-party datasets or credentials.

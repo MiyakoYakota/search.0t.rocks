@@ -1,41 +1,8 @@
-<html>
-<head>
-  <meta property="og:type" content="article" />
-  <meta property="og:title" content="Record Report - {{id}}" />
-  <meta name="description" content="Database Record Report {{#record}}{{key}}: {{value}} {{/record}}">
-  <meta property="og:description" content="Database Record Report {{#record}}{{key}}: {{value}} {{/record}}" />
-  <meta property="og:site_name" content="Database Search" />
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Language" content="en" />
-  <meta name="robots" content="index, follow">
-  <title>Record Report - {{id}}</title>
-</head>
-<body>
-<h1>Record Report</h1>
-<table>
-{{#record}}
-  <tr>
-    <th>{{key}}</th>
-    <td>{{value}}</td>
-  </tr>
-{{/record}}
-</table>
-
-<br />
-<a href='/visualize?id={{id}}' rel="nofollow">Visualize</a>
-<br />
-<br />
-
-<h3>Related Records</h3>
-
-{{#related}}
-<dl>
-    <dt><a href="/documents/by_id/{{id}}">{{id}}</a></dt>
-    {{#record}}
-      <dd>{{key}}: {{value}}</dd>
-    {{/record}}
-</dl>
-{{/related}}
-
-
-</html>
+<!doctype html>
+<!-- Modified for the 2026 modernization; see NOTICE and CHANGELOG.md. -->
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive"><meta name="color-scheme" content="light dark"><meta name="referrer" content="no-referrer">
+<link rel="stylesheet" href="/assets/app.css">
+<title>Record details · Zero Trust Search</title>
+</head><body><header class="site-header"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">ZT</span>Zero Trust Search</a><nav aria-label="Main navigation"><a href="/">Search</a><a href="/map">Spatial</a><a href="/faq">Guide</a></nav></header><main class="container"><div class="page-heading"><a class="back-link" href="/">← New search</a><p class="eyebrow">COLLECTION RECORD</p><h1>Record details</h1><p class="record-id">{{id}}</p></div><section class="panel" aria-label="Record fields"><dl class="detail-list">{{#record}}<div><dt>{{key}}</dt><dd>{{value}}</dd></div>{{/record}}</dl></section><p class="muted">Values are displayed as text. This view does not fetch external images, links, or related profiles.</p></main><footer class="site-footer"><span>Restricted analyst workspace</span><a href="/terms">Data handling</a></footer></body></html>
